@@ -23,6 +23,13 @@ export function BarcodeScanner({ onScan }: BarcodeScannerProps) {
     setError(null);
     setScanning(false);
 
+    // navigator.mediaDevices is undefined on plain HTTP (non-secure context)
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setError("Camera requires HTTPS. Use Title Search or Manual ISBN instead, or open DogEar over a secure connection.");
+      setScanning(false);
+      return;
+    }
+
     try {
       const reader = new BrowserMultiFormatReader();
       readerRef.current = reader;
