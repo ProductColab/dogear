@@ -40,11 +40,11 @@ cd dogear
 docker compose up -d --build
 ```
 
-DogEar runs on **port 630** by default (`http://server-ip:630`). Change it by setting `DOGEAR_PORT` in a `.env` file:
+DogEar runs on **port 6300** by default (`http://server-ip:6300`). Change it by setting `DOGEAR_PORT` in a `.env` file:
 
 ```bash
 # .env
-DOGEAR_PORT=630   # change to any free port
+DOGEAR_PORT=6300   # change to any free port
 ```
 
 On first start, database migrations run automatically. Check everything is up:
@@ -60,11 +60,11 @@ docker compose ps   # all services should show "healthy" or "running"
 Browsers block camera access on plain HTTP. If you want to use the barcode scanner on your phone, you need HTTPS. The easiest options:
 
 **Already have a reverse proxy?** (Nginx Proxy Manager, Traefik, Caddy, etc.)
-Point it at `http://server-ip:630` and terminate TLS there. No changes to DogEar needed.
+Point it at `http://server-ip:6300` and terminate TLS there. No changes to DogEar needed.
 
 **Using Tailscale?**
 1. Enable HTTPS in [Tailscale admin → DNS](https://login.tailscale.com/admin/dns)
-2. Add a proxy entry pointing your Tailscale hostname to port 630
+2. Add a proxy entry pointing your Tailscale hostname to port 6300
 
 > If you don't need the barcode camera scanner (Title Search and Manual ISBN both work over plain HTTP), you can skip HTTPS entirely.
 

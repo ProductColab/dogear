@@ -26,7 +26,7 @@ services:
     environment:
       DATABASE_URL: postgresql://dogear:dogear@db:5432/dogear
     ports:
-      - "${DOGEAR_PORT:-630}:3000"
+      - "${DOGEAR_PORT:-6300}:3000"
 
   pgadmin:
     image: dpage/pgadmin4
