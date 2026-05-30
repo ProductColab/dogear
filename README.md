@@ -34,84 +34,60 @@ git clone https://github.com/dashtink/dogear.git
 cd dogear
 ```
 
-### 2. Choose your HTTPS setup
+### 2. Configure HTTPS
 
-Camera access on mobile **requires HTTPS** — this is enforced by all browsers (Chrome, Safari, Firefox) regardless of whether you're on a local network. It's a browser security rule, not something DogEar can work around. Pick one option:
+Camera access on mobile **requires HTTPS** — enforced by all browsers regardless of network. Set `DOGEAR_HOST` to tell Caddy how to issue your certificate. Create a `.env` file in the project root:
+
+```bash
+# Tailscale (recommended — zero cert setup if already on Tailscale)
+DOGEAR_HOST=my-server.tail1234.ts.net
+
+# Real domain (Let's Encrypt auto-cert — ports 80+443 must be open)
+# DOGEAR_HOST=library.yourdomain.com
+
+# Local IP / no domain — leave unset, see Option C below
+```
 
 ---
 
-#### Option A — Tailscale (easiest, recommended)
+#### Option A — Tailscale ⭐ recommended
 
-[Tailscale](https://tailscale.com) is free, installs in minutes, and gives your server a trusted HTTPS address (`https://your-machine.ts.net`) that works on all your devices with zero certificate setup.
+If Tailscale is already running on your server and devices, this takes 2 minutes.
 
-1. Install Tailscale on your server and your phone
-2. Enable [HTTPS certificates](https://tailscale.com/kb/1153/enabling-https/) in the Tailscale admin console
-3. Update `Caddyfile` to use your Tailscale hostname:
-
-```
-your-machine.ts.net {
-  reverse_proxy app:3000
-}
-```
-
-4. Start the stack:
+1. Enable HTTPS certificates in [Tailscale admin → DNS](https://login.tailscale.com/admin/dns) (one toggle)
+2. Find your server's Tailscale hostname: `tailscale status | head -3`
+3. Create `.env`:
 
 ```bash
-docker compose up -d --build
+echo "DOGEAR_HOST=my-server.tail1234.ts.net" > .env
 ```
 
-Access: `https://your-machine.ts.net`
+Caddy fetches a trusted cert from Tailscale's ACME server automatically. Since your devices already trust Tailscale's CA, the cert is valid immediately — no installs, no warnings, camera works.
 
 ---
 
-#### Option B — Real domain with Let's Encrypt (automatic cert)
-
-If you have a domain pointing to your server's public IP, Caddy handles everything automatically.
-
-1. Update `Caddyfile`:
-
-```
-library.yourdomain.com {
-  reverse_proxy app:3000
-}
-```
-
-2. Make sure ports 80 and 443 are open on your router
-3. Start the stack — cert is issued automatically on first start:
+#### Option B — Real domain (Let's Encrypt)
 
 ```bash
-docker compose up -d --build
+echo "DOGEAR_HOST=library.yourdomain.com" > .env
 ```
 
-Access: `https://library.yourdomain.com`
+Ensure ports 80 and 443 are open on your router/firewall. Caddy handles the rest.
 
 ---
 
-#### Option C — Self-signed cert (no domain, local IP)
+#### Option C — Self-signed cert (local IP, no domain)
 
-The default `Caddyfile` uses Caddy's internal CA. You install the root cert once per device — after that it's transparent.
-
-1. Start the stack:
+Leave `DOGEAR_HOST` unset. Caddy generates an internal CA. You install it once per device:
 
 ```bash
-docker compose up -d --build
-```
-
-2. Export the root certificate:
-
-```bash
+# After starting the stack:
 docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt ./caddy-root.crt
 ```
 
-3. Install on your devices:
-
-**iPhone/iPad:** AirDrop or email `caddy-root.crt` to yourself → open it → Settings → General → VPN & Device Management → Install → then Settings → General → About → Certificate Trust Settings → enable the Caddy CA
+**iPhone/iPad:** AirDrop `caddy-root.crt` to yourself → open it → Settings → General → VPN & Device Management → Install → Settings → General → About → Certificate Trust Settings → enable the Caddy CA
 
 **Android:** Transfer the file → Settings → Security → Encryption & credentials → Install a certificate → CA certificate
-
-You only do this once. After that, `https://192.168.x.x` is fully trusted on that device.
-
-Access: `https://<your-server-ip>`
 
 ---
 
@@ -121,10 +97,10 @@ Access: `https://<your-server-ip>`
 docker compose up -d --build
 ```
 
-On first start, database migrations run automatically. The app is ready at your chosen address once all containers are healthy:
+On first start, database migrations run automatically. Check everything is up:
 
 ```bash
-docker compose ps
+docker compose ps   # all services should show "healthy" or "running"
 ```
 
 ---
