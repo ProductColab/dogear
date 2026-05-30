@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, ScanLine, BookMarked, Users, Library } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DogEarLogo } from "@/components/ui/dogear-logo";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const nav = [
   { href: "/",          label: "Dashboard", icon: LayoutDashboard },
@@ -38,6 +39,9 @@ export function Sidebar() {
           {label}
         </Link>
       ))}
+      <div className="mt-auto px-3 pt-4 border-t">
+        <ThemeToggle />
+      </div>
     </aside>
   );
 }

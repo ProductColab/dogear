@@ -127,10 +127,11 @@ export default async function BookDetailPage({ params }: { params: { id: string 
           )}
 
           <BookDetailActions
-        book={{ id: book.id, title: book.title }}
-        location={book.location?.shelfId ? { shelfId: book.location.shelfId, row: book.location.row, position: book.location.position } : null}
-        activeCheckout={activeCheckout ?? null}
-      />
+            book={{ id: book.id, title: book.title }}
+            location={book.location?.shelfId ? { shelfId: book.location.shelfId, row: book.location.row, position: book.location.position } : null}
+            activeCheckout={activeCheckout ?? null}
+            readStatus={(book.readStatus ?? "unread") as "unread" | "reading" | "read"}
+          />
         </div>
       </div>
 

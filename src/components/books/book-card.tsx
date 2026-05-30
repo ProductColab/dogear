@@ -4,6 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen } from "lucide-react";
 
+const statusStyles: Record<string, string> = {
+  reading:  "bg-amber-100 text-amber-700 border-amber-200",
+  read:     "bg-green-100 text-green-700 border-green-200",
+};
+
 interface BookCardProps {
   book: {
     id: number;
@@ -12,6 +17,7 @@ interface BookCardProps {
     coverUrl?: string | null;
     year?: number | null;
     genre?: string | null;
+    readStatus?: string | null;
     location?: { shelf?: { name: string } | null } | null;
     checkouts?: { returnedAt: Date | string | null }[];
   };
@@ -41,6 +47,13 @@ export function BookCard({ book }: BookCardProps) {
             <div className="absolute top-2 right-2">
               <Badge variant="secondary" className="bg-orange-100 text-orange-700 border-orange-200">
                 On Loan
+              </Badge>
+            </div>
+          )}
+          {!onLoan && book.readStatus && book.readStatus !== "unread" && (
+            <div className="absolute top-2 left-2">
+              <Badge variant="secondary" className={statusStyles[book.readStatus]}>
+                {book.readStatus === "reading" ? "Reading" : "Read"}
               </Badge>
             </div>
           )}

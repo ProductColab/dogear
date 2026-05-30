@@ -24,7 +24,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
-  const [updated] = await db.update(books).set(parsed.data).where(eq(books.id, id)).returning();
+  const { startedAt, finishedAt, ...rest } = parsed.data;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updateData: any = { ...rest };
+  if (startedAt !== undefined)  updateData.startedAt  = startedAt  ? new Date(startedAt)  : null;
+  if (finishedAt !== undefined) updateData.finishedAt = finishedAt ? new Date(finishedAt) : null;
+  const [updated] = await db.update(books).set(updateData).where(eq(books.id, id)).returning();
   if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(updated);
 }

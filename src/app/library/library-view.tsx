@@ -25,6 +25,7 @@ export function LibraryView() {
   const q       = params.get("q") ?? "";
   const shelf   = params.get("shelf") ?? "";
   const onLoan  = params.get("on_loan") === "true";
+  const status  = params.get("status") ?? "";
 
   function updateParam(key: string, value: string | null) {
     const p = new URLSearchParams(params.toString());
@@ -40,10 +41,11 @@ export function LibraryView() {
     if (q)      p.set("q", q);
     if (shelf)  p.set("shelf", shelf);
     if (onLoan) p.set("on_loan", "true");
+    if (status) p.set("status", status);
     const res = await fetch(`/api/books?${p.toString()}`);
     setBooks(await res.json());
     setLoading(false);
-  }, [q, shelf, onLoan]);
+  }, [q, shelf, onLoan, status]);
 
   useEffect(() => { loadBooks(); }, [loadBooks]);
   useEffect(() => { fetch("/api/shelves").then(r => r.json()).then(setShelves); }, []);
@@ -76,6 +78,22 @@ export function LibraryView() {
           }`}
         >
           On Loan
+        </button>
+        <button
+          onClick={() => updateParam("status", status === "reading" ? null : "reading")}
+          className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+            status === "reading" ? "bg-amber-100 border-amber-300 text-amber-700" : "bg-background border-border text-muted-foreground hover:bg-accent"
+          }`}
+        >
+          Reading
+        </button>
+        <button
+          onClick={() => updateParam("status", status === "read" ? null : "read")}
+          className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+            status === "read" ? "bg-green-100 border-green-300 text-green-700" : "bg-background border-border text-muted-foreground hover:bg-accent"
+          }`}
+        >
+          Read
         </button>
       </div>
 

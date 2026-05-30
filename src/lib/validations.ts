@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const ReadStatusSchema = z.enum(["unread", "reading", "read"]);
+
 export const CreateBookSchema = z.object({
   isbn:        z.string().regex(/^\d{10}(\d{3})?$/).optional(),
   title:       z.string().min(1),
@@ -17,7 +19,11 @@ export const CreateBookSchema = z.object({
   pageCount:          z.number().int().positive().optional().nullable(),
 });
 
-export const UpdateBookSchema = CreateBookSchema.partial();
+export const UpdateBookSchema = CreateBookSchema.partial().extend({
+  readStatus: ReadStatusSchema.optional(),
+  startedAt:  z.string().nullable().optional(),
+  finishedAt: z.string().nullable().optional(),
+});
 
 export const CreateCheckoutSchema = z.object({
   bookId:          z.number().int().positive(),

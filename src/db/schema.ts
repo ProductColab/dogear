@@ -1,5 +1,7 @@
-import { pgTable, serial, text, integer, timestamp, date } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, timestamp, date, pgEnum } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+
+export const readStatusEnum = pgEnum("read_status", ["unread", "reading", "read"]);
 
 export const books = pgTable("books", {
   id:          serial("id").primaryKey(),
@@ -18,6 +20,9 @@ export const books = pgTable("books", {
   ratingsCount:     integer("ratings_count"),
   pageCount:        integer("page_count"),
   addedAt:     timestamp("added_at").defaultNow().notNull(),
+  readStatus:  readStatusEnum("read_status").default("unread").notNull(),
+  startedAt:   timestamp("started_at"),
+  finishedAt:  timestamp("finished_at"),
 });
 
 export const shelves = pgTable("shelves", {
