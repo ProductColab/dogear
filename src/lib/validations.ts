@@ -37,6 +37,13 @@ export const CreateShelfSchema = z.object({
   description: z.string().optional(),
 });
 
+export const CreateContactSchema = z.object({
+  name:  z.string().min(1),
+  email: z.string().email().optional().or(z.literal("")),
+  phone: z.string().optional(),
+  notes: z.string().optional(),
+});
+
 export const AssignLocationSchema = z.object({
   shelfId:  z.number().int().positive(),
   row:      z.string().optional(),

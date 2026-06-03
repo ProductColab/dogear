@@ -50,6 +50,14 @@ export const checkouts = pgTable("checkouts", {
   returnedAt:      timestamp("returned_at"),
 });
 
+export const contacts = pgTable("contacts", {
+  id:    serial("id").primaryKey(),
+  name:  text("name").notNull(),
+  email: text("email"),
+  phone: text("phone"),
+  notes: text("notes"),
+});
+
 export const booksRelations = relations(books, ({ one, many }) => ({
   location:  one(bookLocations, { fields: [books.id], references: [bookLocations.bookId] }),
   checkouts: many(checkouts),
