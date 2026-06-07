@@ -3,42 +3,42 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER:     dogear
-      POSTGRES_PASSWORD: dogear
-      POSTGRES_DB:       dogear
+      POSTGRES_USER:     ${POSTGRES_USER:-dogear}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+      POSTGRES_DB:       ${POSTGRES_DB:-dogear}
     volumes:
       - pgdata:/var/lib/postgresql/data
     # Postgres is internal-only. Uncomment to expose for local DB tools (TablePlus, etc.):
     # ports:
     #   - "${DOGEAR_DB_PORT:-54320}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dogear"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dogear}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
   app:
     image: ghcr.io/dashtink/dogear:latest
-    build: .
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://dogear:dogear@db:5432/dogear
+      DATABASE_URL: postgresql://${POSTGRES_USER:-dogear}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-dogear}
     ports:
       - "${DOGEAR_PORT:-6300}:3000"
 
-  pgadmin:
-    image: dpage/pgadmin4
-    restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL:    admin@dogear.local
-      PGADMIN_DEFAULT_PASSWORD: dogear
-    ports:
-      - "${DOGEAR_PGADMIN_PORT:-5050}:80"
-    depends_on:
-      - db
+  # pgAdmin — optional database UI. Remove or comment out if not needed.
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   restart: unless-stopped
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL:    ${PGADMIN_EMAIL:-admin@dogear.local}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:?PGADMIN_PASSWORD must be set}
+  #   ports:
+  #     - "${DOGEAR_PGADMIN_PORT:-5050}:80"
+  #   depends_on:
+  #     - db
 
 volumes:
   pgdata:

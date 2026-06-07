@@ -39,16 +39,20 @@ git clone https://github.com/dashtink/dogear.git
 cd dogear
 ```
 
-### 2. Start
+### 2. Configure
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and set a strong `POSTGRES_PASSWORD`. That's the only required change.
+
+Optionally change `DOGEAR_PORT` (default `6300`).
+
+### 3. Start
 
 ```bash
 docker compose up -d
-```
-
-DogEar runs on **port 6300** by default. Change it by setting `DOGEAR_PORT` in a `.env` file:
-
-```env
-DOGEAR_PORT=6300
 ```
 
 On first start, database migrations run automatically. Check everything is up:
