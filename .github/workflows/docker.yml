@@ -37,7 +37,7 @@ jobs:
           context: .
           push: true
           tags: |
-            danikellogg/dogear:latest
-            ghcr.io/${{ github.repository }}:latest
+            productcolab/dogear:latest
+            ghcr.io/productcolab/dogear:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
